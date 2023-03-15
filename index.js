@@ -12,19 +12,14 @@ const socketIO = require('socket.io')(http, {
 app.use(cors())
 let users = []
 
-const MESSAGE_TYPE = {
-  SENT: 'SENT',
-  RECEIVED: 'RECEIVED'
-};
-
 socketIO.on('connection', (socket) => {
   console.log(`+ ${socket.id} user just connected.`)  
 
   socket.on('message', function(data) {
-    socketIO.emit('messageResponse', {
-      ...data,
-      timestamp: Date.now(),
-    });
+    let timestamp = { timestamp: Date.now() };
+    Object.assign(data, timestamp)
+
+    socketIO.emit('messageResponse', data);
   });
 
   socket.on("typing", data => (
